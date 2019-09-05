@@ -1,7 +1,12 @@
 # Docker environment for Laravel
 
-A plain simple LEMP stack Docker container for your Laravel development environment. 
+Plain dead simple LEMP stack Docker container for your Laravel (and other PHP!) development environment. 
 Multiple Laravel application supported
+
+### Stacks:
+* **Webserver:** nginx:alpine, php:7.3-fpm
+* **Database:** mysql:5.7, postgres:11
+* **Misc:** redis:alpine
 
 ### Install:
 1. install `docker` and `docker-compose`
@@ -18,6 +23,7 @@ Multiple Laravel application supported
 * server_name support in Nginx
 * automatic /etc/hosts binding
 * multiple PHP version
+* use unix socket instead of tcp port for PHP-Fpm
 
 #### Contributing notes:
 * submit your pull request to 'dev' branch
