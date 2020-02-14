@@ -1,12 +1,32 @@
-version: '3'
+version: '3.7'
 services:
-  # PHP Service
-  php:
+  # PHP Services
+  php70:
+    build:
+      context: .
+      dockerfile: docker/php/7.0/Dockerfile
+    image: infinitum/php-7.0
+    container_name: infinitum-php-7.0
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./app/:/var/www
+      - ./docker/php/7.0/local.ini:/usr/local/etc/php/conf.d/local.ini
+      #      - ./docker/php/7.0/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+      - infinitum-volumes-phpsocket:/run/php
+    networks:
+      - infinitum-network
+
+  php73:
     build:
       context: .
       dockerfile: docker/php/7.3/Dockerfile
-    image: infinitum/php
-    container_name: infinitum-php
+    image: infinitum/php-7.3
+    container_name: infinitum-php-7.3
     restart: unless-stopped
     tty: true
     environment:
@@ -17,6 +37,26 @@ services:
       - ./app/:/var/www
       - ./docker/php/7.3/local.ini:/usr/local/etc/php/conf.d/local.ini
 #      - ./docker/php/7.3/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+      - infinitum-volumes-phpsocket:/run/php
+    networks:
+      - infinitum-network
+
+  php74:
+    build:
+      context: .
+      dockerfile: docker/php/7.4/Dockerfile
+    image: infinitum/php-7.4
+    container_name: infinitum-php-7.4
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./app/:/var/www
+      - ./docker/php/7.4/local.ini:/usr/local/etc/php/conf.d/local.ini
+      #      - ./docker/php/7.3/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
       - infinitum-volumes-phpsocket:/run/php
     networks:
       - infinitum-network
@@ -35,7 +75,8 @@ services:
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
       - infinitum-volumes-phpsocket:/run/php
     networks:
-      - infinitum-network
+      infinitum-network:
+        ipv4_address: "178.18.18.80"
 
   # Redis store
   redis:
@@ -72,7 +113,7 @@ services:
 
   # PostgreSQL Service
   postgresql:
-    image: postgres:11
+    image: postgres:12
     container_name: infinitum-postgresql
     restart: unless-stopped
     tty: true
@@ -90,10 +131,16 @@ services:
     networks:
       - infinitum-network
 
-#Docker Networks
 networks:
   infinitum-network:
     driver: bridge
+    # driver_opts:
+    #   com.docker.network.enable_ipv5: "true"
+    ipam:
+      config:
+      - subnet: "178.18.18.0/24"
+      # - subnet: "2001:3984:3989::/64"
+      # gateway: "2001:3984:3989::1"
 
 #Volumes
 volumes:
